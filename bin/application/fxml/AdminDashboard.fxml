@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.fxml.AdminDashboardController"
+            prefHeight="600.0" prefWidth="1000.0"
+>
+
+    <top>
+        <Label text="Admin Dashboard" styleClass="title" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </padding>
+        </Label>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab text="User Management">
+                    <content>
+                        <VBox spacing="10.0">
+                            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                <Button text="Add User" onAction="#handleAddUser"/>
+                                <Button text="Update User" onAction="#handleUpdateUser"/>
+                                <Button text="Delete User" onAction="#handleDeleteUser"/>
+                            </HBox>
+                            <TableView fx:id="userTableView" prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                    <TableColumn fx:id="userIdColumn" text="ID"/>
+                                    <TableColumn fx:id="userNameColumn" text="Username"/>
+                                    <TableColumn fx:id="userEmailColumn" text="Email"/>
+                                    <TableColumn fx:id="userRoleColumn" text="Role"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Product Management">
+                    <content>
+                        <VBox spacing="10.0" >
+                            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                <Button text="Add Product" onAction="#handleAddProduct"/>
+                                <Button text="Update Product" onAction="#handleUpdateProduct"/>
+                                <Button text="Delete Product" onAction="#handleDeleteProduct"/>
+                            </HBox>
+                            <TableView fx:id="productTableView" prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                    <TableColumn fx:id="productIdColumn" text="ID"/>
+                                    <TableColumn fx:id="productNameColumn" text="Name"/>
+                                    <TableColumn fx:id="productPriceColumn" text="Price"/>
+                                    <TableColumn fx:id="productSupplierColumn" text="Supplier"/>
+                                </columns>
+                            </TableView>
+
+                            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                <Label text="Product Name:"/>
+                                <TextField fx:id="productNameField"/>
+                                <Label text="Product Price:"/>
+                                <TextField fx:id="productPriceField"/>
+                                <Label text="Supplier:"/>
+                                <ComboBox fx:id="supplierComboBox"/>
+                                <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                </padding>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>

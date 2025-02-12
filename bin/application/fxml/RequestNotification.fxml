@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.fxml.RequestNotificationController">
+    <children>
+        <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10;" text="Product Requests" />
+        <TableView fx:id="requestTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="idColumn" prefWidth="48.79998779296875" text="ID" />
+                <TableColumn fx:id="productNameColumn" prefWidth="145.60003662109375" text="Product Name" />
+                <TableColumn fx:id="quantityColumn" prefWidth="69.5999755859375" text="Quantity" />
+                <TableColumn fx:id="statusColumn" prefWidth="123.20001220703125" text="Status" />
+            <TableColumn fx:id="reasonColumn" prefWidth="212.00006103515625" text="Reason" />
+            </columns>
+        </TableView>
+
+        <HBox alignment="CENTER" spacing="10.0" style="-fx-padding: 10;">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleAcceptRequest" text="Accept" />
+                <Button mnemonicParsing="false" onAction="#handleRejectRequest" text="Reject" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
