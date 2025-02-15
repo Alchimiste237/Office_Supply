@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class AdminDashboardController{
 
@@ -179,9 +180,10 @@ public class AdminDashboardController{
             Dialog<User> dialog = createUpdateUserDialog(selectedUser);
             dialog.showAndWait().ifPresent(updatedUser -> {
                 try {
-                    updateUser(updatedUser);
-                } catch (SQLException e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to update user: " + e.getMessage());
+                	System.out.println(selectedUser +" "+ updatedUser);
+                    updateUser(selectedUser,updatedUser);
+                } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to update user ok: " + e.getMessage());
                     e.printStackTrace();
                 }
             });
@@ -190,8 +192,42 @@ public class AdminDashboardController{
         }
     }
     // Method to handle user update
-    private void updateUser(User user) throws SQLException{
-        boolean success = databaseService.updateUser(user);
+    private void updateUser(User selected, User updatedUser) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+        // Hash the password if it has been changed
+        String newPassword = updatedUser.getPassword();
+        String salt;
+        String hashedPassword;
+
+        //Only update the password if a new password was entered
+        if (newPassword != null && !newPassword.isEmpty()) {
+            // Generate a new salt and hash the password
+            salt = encryptionService.generateSalt();
+            hashedPassword = encryptionService.hashPassword(newPassword, salt);
+        } else {
+            // If the password field is empty, retrieve the existing salt and password
+            Optional<DatabaseService.UserCredentials> userCredentials = databaseService.getUserCredentials(selected.getUsername());
+            if (userCredentials.isPresent()) {
+                hashedPassword = userCredentials.get().hashedPassword();
+                salt = userCredentials.get().salt();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Update Failed", "Could not retrieve existing credentials.");
+                return;
+            }
+        }
+
+
+        // Create a new User object with the updated information
+        User userToUpdate = new User();
+        userToUpdate.setUserId(selected.getUserId());
+        userToUpdate.setUsername(updatedUser.getUsername());
+        userToUpdate.setPassword(hashedPassword);
+        userToUpdate.setRole(updatedUser.getRole());
+        userToUpdate.setSalt(salt);
+        userToUpdate.setAddress(updatedUser.getAddress());
+        System.out.println(userToUpdate);
+
+        boolean success = databaseService.updateUser(userToUpdate);
+
         if (success) {
             showAlert(Alert.AlertType.INFORMATION, "Update Successful", "User updated successfully!");
             loadUsers();
@@ -199,7 +235,6 @@ public class AdminDashboardController{
             showAlert(Alert.AlertType.ERROR, "Update Failed", "Failed to update user. Please try again.");
         }
     }
-
     @FXML
     void handleDeleteUser(ActionEvent event) {
         User selectedUser = userTableView.getSelectionModel().getSelectedItem();
@@ -447,7 +482,7 @@ public class AdminDashboardController{
                // Otherwise, we will update it with the new value.
                String updatedPassword = password.getText().isEmpty() ? user.getPassword() : password.getText();
 
-               return new User(username.getText(), updatedPassword, role.getValue(), address.getText());
+               return new User(username.getText(), address.getText(), updatedPassword, role.getValue());
             }
             return null;
         });

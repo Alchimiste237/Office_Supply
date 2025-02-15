@@ -14,10 +14,9 @@ import application.model.User;
 
 public class DatabaseService {
 
-    private final String dbUrl = "jdbc:postgresql://localhost:5432/office_supply";  // Replace with your database URL
-    private final String dbUser = "postgres";   // Replace with your database username
-    private final String dbPassword = "chris237"; // Replace with your database password
-
+    private final String dbUrl = "jdbc:postgresql://localhost:5432/office_supply"; 
+    private final String dbUser = "postgres";   
+    private final String dbPassword = "chris237";
     
     
     
@@ -84,6 +83,26 @@ public class DatabaseService {
             throw e;
         }
     }
+    
+    public String getUserRole(String username) throws SQLException {
+        String sql = "SELECT role FROM users WHERE username = ?";  // Adjust table/column names to match your database
+
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("role");
+                } else {
+                    return null; // User not found
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving user role: " + e.getMessage());
+            throw e; // Re-throw the exception to be handled by the caller
+        }
+    }
 
     public boolean deleteUser(int userId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -114,27 +133,29 @@ public class DatabaseService {
         return users;
     }
     
-    public boolean updateUser(User user) {
-        String sql = "UPDATE users SET username = ?, role = ?, address = ? WHERE user_id = ?";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-    
-            preparedStatement.setString(1, user.getUsername());
-            preparedStatement.setString(2, user.getRole());
-            preparedStatement.setString(3, user.getAddress());
-            preparedStatement.setInt(4, user.getUserId());
-    
-            int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0; // Returns true if the update was successful
-    
+    public boolean updateUser(User user) throws SQLException {
+        String sql = "UPDATE users SET username = ?, password = ?, role = ?, salt = ?, address = ? WHERE user_id = ?";
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getRole());
+            statement.setString(4, user.getSalt());                           
+            statement.setString(5, user.getAddress());
+            statement.setInt(6, user.getUserId());
+
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false; // Return false if there was an error
+            System.err.println("Error updating user: " + e.getMessage());
+            throw e;
         }
     }
     
-    // Example method: Check if a username already exists (important for registration)
-    public boolean usernameExists(String username) throws SQLException {
+   public boolean usernameExists(String username) throws SQLException {
         String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -146,8 +167,7 @@ public class DatabaseService {
                     int count = rs.getInt(1);
                     return count > 0;
                 } else {
-                    return false;  // Handle the case where the query fails
-                }
+                    return false;    }
             }
         } catch (SQLException e) {
             System.err.println("Error checking username existence: " + e.getMessage());

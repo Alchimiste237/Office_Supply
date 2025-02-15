@@ -1,11 +1,21 @@
-package application.controller;
+package application.fxml;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.sql.SQLException;
+import java.util.Optional;
 
 import application.service.DatabaseService;
 import application.service.EncryptionService;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class LoginController {
 
@@ -19,7 +29,7 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
-    private void handleLoginButton() {
+    private void handleLoginButton() throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -39,14 +49,41 @@ public class LoginController {
             String loginHashedPassword = encryptionService.hashPassword(password, salt);
 
             if (hashedPassword.equals(loginHashedPassword)) {
-                showAlert("Success", "Login successful!");
-                // Proceed to the next step (e.g., open the main application window)
+                // Retrieve user role
+                String role = databaseService.getUserRole(username); // Implement this method to get the user's role
 
+                switch (role.toLowerCase()) {
+                    case "admin":
+                        loadPage("AdminDashboard.fxml");
+                        break;
+                    case "employee":
+                        loadPage("employee.fxml");
+                        break;
+                    case "manager":
+                        loadPage("ManagerDashboard.fxml");
+                        break;
+                    default:
+                        showAlert("Error", "Unknown role.");
+                        break;
+                }
             } else {
                 showAlert("Error", "Invalid username or password.");
             }
         } else {
             showAlert("Error", "User not found.");
+        }
+    }
+
+    private void loadPage(String fxmlFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load page: " + e.getMessage());
         }
     }
 

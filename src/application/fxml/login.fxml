@@ -38,14 +38,14 @@
                               <Font size="15.0" />
                            </font>
                         </PasswordField>
-                        <Button layoutX="146.0" layoutY="345.0" mnemonicParsing="false" onAction="#handleLoginButtonAction" prefHeight="38.0" prefWidth="210.0" style="-fx-background-color: black;" text="Login" textFill="WHITE">
+                        <Button layoutX="146.0" layoutY="345.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="38.0" prefWidth="210.0" style="-fx-background-color: black;" text="Login" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
                         </Button>
                         <ImageView fitHeight="151.0" fitWidth="169.0" layoutX="168.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@user.png" />
+                              <Image url="@../../../../../Downloads/user.png" />
                            </image>
                         </ImageView>
                      </children>

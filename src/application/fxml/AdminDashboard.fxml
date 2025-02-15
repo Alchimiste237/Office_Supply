@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.fxml.AdminDashboardController"
-            prefHeight="600.0" prefWidth="1000.0"
->
+<BorderPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.fxml.AdminDashboardController">
 
     <top>
-        <Label text="Admin Dashboard" styleClass="title" BorderPane.alignment="CENTER">
+        <Label styleClass="title" text="Admin Dashboard" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
+         <font>
+            <Font name="Book Antiqua" size="30.0" />
+         </font>
         </Label>
     </top>
 
@@ -23,18 +32,24 @@
             <tabs>
                 <Tab text="User Management">
                     <content>
-                        <VBox spacing="10.0">
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Button text="Add User" onAction="#handleAddUser"/>
-                                <Button text="Update User" onAction="#handleUpdateUser"/>
-                                <Button text="Delete User" onAction="#handleDeleteUser"/>
+                        <VBox prefHeight="300.0" prefWidth="1000.0" spacing="10.0">
+                            <HBox alignment="CENTER" spacing="100.0">
+                                <Button onAction="#handleAddUser" text="Add User" />
+                                <Button onAction="#handleUpdateUser" text="Update User" />
+                                <Button onAction="#handleDeleteUser" text="Delete User" />
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                        <VBox.margin>
+                           <Insets bottom="20.0" top="5.0" />
+                        </VBox.margin>
                             </HBox>
-                            <TableView fx:id="userTableView" prefHeight="200.0" prefWidth="200.0">
+                            <TableView fx:id="userTableView" prefHeight="492.0" prefWidth="1000.0">
                                 <columns>
-                                    <TableColumn fx:id="userIdColumn" text="ID"/>
-                                    <TableColumn fx:id="userNameColumn" text="Username"/>
-                                    <TableColumn fx:id="userEmailColumn" text="Email"/>
-                                    <TableColumn fx:id="userRoleColumn" text="Role"/>
+                                    <TableColumn fx:id="userIdColumn" prefWidth="55.466638684272766" text="ID" />
+                                    <TableColumn fx:id="userNameColumn" prefWidth="266.1333694458008" text="Username" />
+                                    <TableColumn fx:id="userEmailColumn" prefWidth="339.73329162597656" text="Address" />
+                                    <TableColumn fx:id="userRoleColumn" prefWidth="339.7332305908203" text="Role" />
                                 </columns>
                             </TableView>
                         </VBox>
@@ -42,30 +57,33 @@
                 </Tab>
                 <Tab text="Product Management">
                     <content>
-                        <VBox spacing="10.0" >
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Button text="Add Product" onAction="#handleAddProduct"/>
-                                <Button text="Update Product" onAction="#handleUpdateProduct"/>
-                                <Button text="Delete Product" onAction="#handleDeleteProduct"/>
+                        <VBox spacing="10.0">
+                            <HBox alignment="CENTER" spacing="10.0">
+                                <Button onAction="#handleAddProduct" text="Add Product" />
+                                <Button onAction="#handleUpdateProduct" text="Update Product" />
+                                <Button onAction="#handleDeleteProduct" text="Delete Product" />
+                        <VBox.margin>
+                           <Insets bottom="30.0" top="10.0" />
+                        </VBox.margin>
                             </HBox>
-                            <TableView fx:id="productTableView" prefHeight="200.0" prefWidth="200.0">
+                            <TableView fx:id="productTableView" prefHeight="355.0" prefWidth="1000.0">
                                 <columns>
-                                    <TableColumn fx:id="productIdColumn" text="ID"/>
-                                    <TableColumn fx:id="productNameColumn" text="Name"/>
-                                    <TableColumn fx:id="productPriceColumn" text="Price"/>
-                                    <TableColumn fx:id="productSupplierColumn" text="Supplier"/>
+                                    <TableColumn fx:id="productIdColumn" prefWidth="37.333337903022766" text="ID" />
+                                    <TableColumn fx:id="productNameColumn" prefWidth="336.0000343322754" text="Name" />
+                                    <TableColumn fx:id="productPriceColumn" prefWidth="396.0" text="Quantity" />
+                                    <TableColumn fx:id="productSupplierColumn" prefWidth="231.19993591308594" text="Supplier" />
                                 </columns>
                             </TableView>
 
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Label text="Product Name:"/>
-                                <TextField fx:id="productNameField"/>
-                                <Label text="Product Price:"/>
-                                <TextField fx:id="productPriceField"/>
-                                <Label text="Supplier:"/>
-                                <ComboBox fx:id="supplierComboBox"/>
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label text="Product Name:" />
+                                <TextField fx:id="productNameField" />
+                                <Label text="Product Price:" />
+                                <TextField fx:id="productPriceField" />
+                                <Label text="Supplier:" />
+                                <ComboBox fx:id="supplierComboBox" />
                                 <padding>
-                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                             </HBox>
                         </VBox>
