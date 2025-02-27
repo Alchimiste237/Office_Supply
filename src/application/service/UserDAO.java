@@ -39,6 +39,7 @@ public class UserDAO {
  public List<User> getUsersByRole(String role) {
      List<User> users = new ArrayList<>();
      // Implement your data access logic here (e.g., from a database)
+     
      try (Connection connection = DriverManager.getConnection(url, user, password);
           PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE role = ?")) {
 

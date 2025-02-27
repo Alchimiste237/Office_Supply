@@ -8,13 +8,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import application.model.User;
 import application.service.DatabaseService;
 import application.service.EncryptionService;
+import application.service.OrderDAO;
 import application.service.ProductDAO;
+import application.service.SupplierDAO;
 import application.service.UserDAO;
+import application.model.Order;
+import application.model.OrderItem;
+import application.model.Supplier;
 import application.model.Supply;
 
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +31,8 @@ import java.util.Optional;
 
 public class AdminDashboardController{
 
-    // User Table
+    private int buyerId = 0;
+	// User Table
     @FXML private TableView<User> userTableView;
     @FXML private TableColumn<User, Integer> userIdColumn;
     @FXML private TableColumn<User, String> userNameColumn;
@@ -42,6 +49,30 @@ public class AdminDashboardController{
     @FXML private TextField productNameField;
     @FXML private TextField productPriceField;
     @FXML private ComboBox<String> supplierComboBox;
+    
+//    start of
+    
+    private final OrderDAO orderDAO = new OrderDAO(); //Reuse or adapt your existing OrderDAO
+    private final SupplierDAO supplierDAO = new SupplierDAO(); //You'll need this to get suppliers
+//    private final ProductDAO productDAO = new ProductDAO();   //And this to get products (adapt to your product management)
+
+    
+    @FXML
+    private ComboBox<User> supplierBox;
+
+    @FXML
+    private ComboBox<Supply> productComboBox;
+
+    @FXML
+    private TextField quantityField;
+
+    @FXML
+    private TextArea deliveryAddressArea;
+
+    private final ObservableList<OrderItem> orderItems = FXCollections.observableArrayList(); //Keeps track of items in the order (ShoppingCart functionality)
+
+    
+//    end of 
 
     private ObservableList<User> userList = FXCollections.observableArrayList();
     private ObservableList<Supply> productList = FXCollections.observableArrayList();
@@ -73,6 +104,26 @@ public class AdminDashboardController{
 
         // Load Suppliers into ComboBox
         loadSuppliers();
+        
+//        
+        
+        List<User> suppliers = supplierDAO.getAllSupplier(); //Implement this method in your SupplierDAO
+        supplierBox.setItems(FXCollections.observableArrayList(suppliers));
+
+        //Event listener for Supplier selection
+        supplierBox.setOnAction(_ -> {
+            User selectedSupplier = supplierBox.getValue();
+            if (selectedSupplier != null) {
+                //Load products for the selected supplier
+                List<Supply> products = productDAO.getProductsBySupplier(selectedSupplier.getUserId()); //Implement this method in your ProductDAO
+                productComboBox.setItems(FXCollections.observableArrayList(products));
+            } else {
+                productComboBox.setItems(null); //Clear products if no supplier is selected
+            }
+        });
+        
+        
+        
     }
 
     // *** User Management ***
@@ -82,6 +133,102 @@ public class AdminDashboardController{
         userTableView.setItems(userList);
     }
 
+//    add order item
+    
+    @FXML
+    void handleAddItem(ActionEvent event) {
+        try {
+            User selectedSupplier = supplierBox.getValue();
+            Supply selectedProduct = productComboBox.getValue();
+            int quantity = Integer.parseInt(quantityField.getText());
+
+            if (selectedSupplier == null || selectedProduct == null) {
+                showAlert(null, "Error", "Please select a supplier and a product.");
+                return;
+            }
+             if (quantity <= 0) {
+                showAlert(null, "Error", "Quantity must be greater than zero.");
+                return;
+            }
+
+
+            // Create an OrderItem (you'll need an OrderItem class similar to Order)
+            OrderItem orderItem = new OrderItem();
+            orderItem.setSupplyId(selectedProduct.getId()); //Get the product ID
+            orderItem.setSupplyName(selectedProduct.getName());
+            orderItem.setQuantity(quantity);
+            orderItem.setUnitPrice(selectedProduct.getPrice());  //Get the product price (you need a getPrice() method in your Product class)
+
+            orderItems.add(orderItem); //Add item to cart
+
+            clearInputFields();
+
+        } catch (NumberFormatException e) {
+            showAlert(null, "Error", "Invalid quantity. Please enter a number.");
+        }
+    }
+
+    private void clearInputFields() {
+        productComboBox.setValue(null);
+        quantityField.clear();
+    }
+    
+    @FXML
+    void handleSubmitOrder(ActionEvent event) {
+        try {
+            String deliveryAddress = deliveryAddressArea.getText();
+            User selectedSupplier = supplierBox.getValue();
+
+             if (selectedSupplier == null) {
+                showAlert(null, "Error", "Please select a supplier.");
+                return;
+            }
+            if (orderItems.isEmpty()) {
+                showAlert(null, "Error", "Please add items to your order before submitting.");
+                return;
+            }
+            // Calculate the total amount of the order
+            double totalAmount = calculateTotalAmount();
+
+            // Create a new Order object
+            Order order = new Order();
+            order.setSupplierId(selectedSupplier.getUserId());  //Set the supplier ID
+            order.setUserId(this.buyerId);
+            order.setOrderDate(java.time.LocalDate.now());
+            order.setTotalAmount(totalAmount);
+            order.setOrderStatus("Pending"); // Initial status
+           
+
+            // Save the order to the database using OrderDAO
+            int orderId = orderDAO.createOrder(order, orderItems); //Implement createOrder() in your OrderDAO
+
+            if (orderId > 0) {
+                // Display success message
+                showAlert(null, "Success", "Order submitted successfully! Order ID: " + orderId);
+                 orderItems.clear(); // Clear the cart after submitting
+                clearInputFields();
+
+            } else {
+                showAlert(null, "Error", "Failed to submit order.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); //Proper logging
+            showAlert(null, "Error", "An error occurred while submitting the order.");
+        }
+    }
+
+    // Helper function to calculate total amount
+    private double calculateTotalAmount() {
+        double total = 0.0;
+        for (OrderItem item : orderItems) {
+            total += item.getQuantity() * item.getUnitPrice();
+        }
+        return total;
+    }
+    
+    
+    
+    
     @FXML
     void handleAddUser(ActionEvent event) {
         // Implement your add user logic here
@@ -92,7 +239,7 @@ public class AdminDashboardController{
             try {
                 createUser(newUser);
             } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Failed to add user: " + e.getMessage());
+                showAlert(null, "Error", "Failed to add user: " + e.getMessage());
                 e.printStackTrace();
             }
         });
@@ -112,7 +259,7 @@ public class AdminDashboardController{
         String UserAddress = user.getAddress();
 
 
-        if(!role.equalsIgnoreCase("Supplier")) {
+       
             if (userName == null || userName.isEmpty() || Userpassword == null || Userpassword.isEmpty() || UserAddress == null || UserAddress.isEmpty()) {
                 System.out.println("you are a supplier");
             	showAlert(Alert.AlertType.ERROR, "Registration Failed", "Please enter username, password, and address.");
@@ -145,32 +292,6 @@ public class AdminDashboardController{
                 showAlert(Alert.AlertType.ERROR, "Registration Failed", "Encryption error: " + e.getMessage());
                 e.printStackTrace(); // Log the error for debugging
             }
-        }else {
-            try {
-                if (databaseService.usernameExists(userName)) {
-                    showAlert(Alert.AlertType.ERROR, "Registration Failed", "Username already exists.");
-                    return;
-                }
-
-
-                String salt = null;
-                String hashedPassword = null;
-
-                boolean success = databaseService.createUser(userName, hashedPassword,role , salt, UserAddress);
-
-                if (success) {
-                    showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Supplier registered successfully!");
-                    // Optionally, clear the fields or redirect to a login page
-                    loadUsers(); // Refresh after creating the user
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Registration Failed", "Failed to create user. Please try again.");
-                }
-
-            } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "Registration Failed", "Database error: " + e.getMessage());
-                e.printStackTrace(); // Log the error for debugging
-            }
-        }
     }
 
     @FXML
@@ -498,7 +619,7 @@ public class AdminDashboardController{
         supplierComboBox.setValue(null);
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
+    private void showAlert(AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);

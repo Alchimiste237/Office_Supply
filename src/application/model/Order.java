@@ -2,22 +2,29 @@ package application.model;
 
 import java.time.LocalDate;
 
-public class Order {
-	private int orderId;
-    private int userId;
-    private LocalDate orderDate;
-    private String status; //e.g., "pending", "shipped", "delivered"
 
-    //Constructors, Getters, Setters, toString()
+public class Order {
+    private int orderId;
+    private int supplierId;
+    private LocalDate orderDate;
+    private double totalAmount;
+    private String orderStatus;
+    private int userId;
+
+
+    // Constructors, getters, and setters
 
     public Order() {
     }
 
-    public Order(int orderId, int userId, LocalDate orderDate, String status) {
+    public Order(int orderId, int supplierId, LocalDate orderDate, double totalAmount, String orderStatus, int userId) {
         this.orderId = orderId;
-        this.userId = userId;
+        this.supplierId = supplierId;
         this.orderDate = orderDate;
-        this.status = status;
+        this.totalAmount = totalAmount;
+        this.orderStatus = orderStatus;
+        this.userId = userId;
+    
     }
 
     public int getOrderId() {
@@ -28,12 +35,12 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getSupplierId() {
+        return supplierId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setSupplierId(int supplierId) {
+        this.supplierId = supplierId;
     }
 
     public LocalDate getOrderDate() {
@@ -44,21 +51,38 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public String getStatus() {
-        return status;
+    public double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "orderId=" + orderId +
-                ", userId=" + userId +
+                ", supplierId=" + supplierId +
                 ", orderDate=" + orderDate +
-                ", status='" + status + '\'' +
+                ", totalAmount=" + totalAmount +
+                ", orderStatus='" + orderStatus + '\'' +
                 '}';
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="SupplierOrderController"
+      prefHeight="600.0" prefWidth="800.0" spacing="10.0"
+      >
+
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+
+    <TableView fx:id="orderTable" prefHeight="400.0" prefWidth="780.0">
+        <columns>
+            <TableColumn fx:id="orderIdCol" text="Order ID"/>
+            <TableColumn fx:id="orderDateCol" text="Order Date"/>
+            <TableColumn fx:id="totalAmountCol" text="Total Amount"/>
+            <TableColumn fx:id="orderStatusCol" text="Order Status"/>
+            <TableColumn fx:id="buyerNameCol" text="Buyer Name"/>
+            <TableColumn fx:id="deliveryAddressCol" text="Delivery Address"/>
+        </columns>
+    </TableView>
+
+    <GridPane hgap="10.0" vgap="10.0">
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </padding>
+        <Label text="Order ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="orderIdField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="New Status:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Button text="Update Status" onAction="#handleUpdateStatus" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <!-- <fx:define>
+        <Number fx:id="x_paddings" fx:value="10.0" />
+    </fx:define> -->
+
+</VBox>

@@ -1,6 +1,5 @@
 package application.fxml;
 
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -8,6 +7,7 @@ import java.util.Optional;
 
 import application.service.DatabaseService;
 import application.service.EncryptionService;
+import application.service.getData;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -51,7 +51,7 @@ public class LoginController {
             if (hashedPassword.equals(loginHashedPassword)) {
                 // Retrieve user role
                 String role = databaseService.getUserRole(username); // Implement this method to get the user's role
-
+                getData.username = username;
                 switch (role.toLowerCase()) {
                     case "admin":
                         loadPage("AdminDashboard.fxml");
@@ -61,6 +61,9 @@ public class LoginController {
                         break;
                     case "manager":
                         loadPage("ManagerDashboard.fxml");
+                        break;
+                    case "supplier":
+                        loadPage("SupplierDashboard.fxml");
                         break;
                     default:
                         showAlert("Error", "Unknown role.");
@@ -82,8 +85,9 @@ public class LoginController {
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             showAlert("Error", "Failed to load page: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

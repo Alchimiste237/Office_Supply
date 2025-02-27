@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.fxml.ManagerDashboardController">
+<VBox prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.fxml.ManagerDashboardController">
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 10;">
             <children>
                 <Button mnemonicParsing="false" onAction="#handleSwitchToNotifications" text="View Requests" />
             </children>
         </HBox>
-        <Label text="Product Management" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+        <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Product Management" />
         <TableView fx:id="productTable" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="idColumn" text="ID" />
-                <TableColumn fx:id="nameColumn" text="Name" prefWidth="200.0" />
-                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100.0" />
-                <TableColumn fx:id="supplierColumn" text="Supplier" prefWidth="150.0" />
+                <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Name" />
+                <TableColumn fx:id="quantityColumn" prefWidth="341.5999755859375" text="Quantity" />
+                <TableColumn fx:id="supplierColumn" prefWidth="378.40008544921875" text="Supplier" />
             </columns>
         </TableView>
 
-        <GridPane hgap="10.0" vgap="10.0" style="-fx-padding: 10;">
+        <GridPane hgap="10.0" style="-fx-padding: 10;" vgap="10.0">
             <Label text="Product Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <TextField fx:id="productNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
@@ -28,11 +37,22 @@
             <TextField fx:id="productQuantityField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
             <Label text="Supplier:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <ComboBox fx:id="supplierComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="200.0"/>
+            <ComboBox fx:id="supplierComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <Button text="Add" onAction="#handleAddProduct" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <Button text="Update" onAction="#handleUpdateProduct" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Button text="Delete" onAction="#handleDeleteProduct" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Button onAction="#handleAddProduct" text="Add" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Button onAction="#handleUpdateProduct" text="Update" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button onAction="#handleDeleteProduct" text="Delete" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
     </children>
 </VBox>

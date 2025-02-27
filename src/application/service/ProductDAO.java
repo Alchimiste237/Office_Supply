@@ -100,6 +100,34 @@ public class ProductDAO {
      }
  }
 
+public List<Supply> getProductsBySupplier(int userId) {
+	// TODO Auto-generated method stub
+	 List<Supply> products = new ArrayList<>();
+	try (Connection connection = DriverManager.getConnection(url, user, password);
+	          PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM supplies WHERE supplier_id = ?")) {
+
+	         preparedStatement.setInt(1, userId);
+
+	         ResultSet resultSet = preparedStatement.executeQuery();
+	         
+	         while (resultSet.next()) {
+	             Supply product = new Supply();
+	                 product.setId(resultSet.getInt("supply_id"));
+	                 product.setName(resultSet.getString("name"));
+	                 product.setPrice(resultSet.getInt("quantity"));
+	                 product.setSupplierId(resultSet.getInt("supplier_id"));
+	                 product.setSupplierName(resultSet.getString("supplier_name"));
+	                 
+	                 products.add(product);
+	                   	
+	         }
+	     } catch (SQLException e) {
+	         e.printStackTrace();
+	     }
+	
+	return products;
+
  // Add other CRUD operations as needed
+}
 }
 
